@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Symbol Replacing Circle</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700&display=swap');
+
+        /* General Styles */
+        body {
+            font-family: 'Orbitron', sans-serif;
+            margin: 0;
+            background: #101820;
+            color: #ffffff;
+            height: 100vh;
+            display: flex;
+            flex-direction: row; /* For side menu */
+        }
+
+        /* Side Navigation Styles */
+        .cyber-nav {
+            width: 80px;
+            background: linear-gradient(135deg, #333, #101820);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px 0;
+            position: fixed;
+            height: 100%;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.8);
+        }
+
+        .cyber-nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 20px 0;
+            cursor: pointer;
+            transition: transform 0.3s ease, color 0.3s ease;
+        }
+
+        .cyber-nav-item i {
+            font-size: 24px;
+            color: #0077ff;
+        }
+
+        .cyber-nav-item .tooltip {
+            margin-top: 8px;
+            font-size: 12px;
+            color: #ffffff;
+            opacity: 0;
+            transform: translateY(10px);
+            transition: opacity 0.3s ease, transform 0.3s ease;
+        }
+
+        .cyber-nav-item:hover i {
+            color: #ffffff;
+        }
+
+        .cyber-nav-item:hover .tooltip {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .game-container {
+            margin-left: 80px; /* Offset for side menu */
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            height: 100%;
+        }
+
+        /* Top Section */
+        .top-section {
+            flex: 6;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(135deg, #0077ff, #101820);
+        }
+.symbol-container {
+            position: relative;
+            font-size: 10rem;
+            color: #FFF;
+            display: flex;
+            align-items: center;
+            justify-content: center;}
+            
+        .symbol-container::before {
+            content: "♀";
+            position: absolute;
+            right: 2;
+            font-size: 35rem;
+            transform: translateX(10%) rotate(15deg);
+            color:#0077ff);
+          OPACITY: .26;
+
+        }
+
+        .symbol-container::after {
+            content: "♂";
+            position: absolute;
+            right: 2;
+            font-size: 40rem;
+            transform: translateX(12%) rotate(17deg);
+            color: #E6E6E6;
+          OPACITY: .14;
+       
+        }
+ 
+        .symbol-text {
+            position: absolute;
+            font-size: 18
+            rem;
+            LEFT:-1
+            font-weight: bold;
+            color: #FFF;
+            text-shadow: 2px 2px 10px rgba(0, 0, 0, 0.9);
+          Z-INDEX: 10
+        }
+
+
+        /* Bottom Section */
+        .bottom-section {
+            flex: 1;
+            background: #1c1c1c;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 10%;
+        }
+
+        /* Diamond Buttons */
+        .diamond-buttons {
+            position: relative;
+            width: 120px;
+            height: 120px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .diamond-buttons button {
+            position: absolute;
+            width: 45px;
+            height: 45px;
+            background: #333;
+            border: 2px solid #0077ff;
+            color: #0077ff;
+            font-size: 16px;
+            font-weight: bold;
+            border-radius: 10%;
+            cursor: pointer;
+            transition: transform 0.3s ease, background 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .diamond-buttons button:hover {
+            background: #0077ff;
+            color: #FFF;
+            box-shadow: 0 0 15px #0077ff;
+        }
+
+        .diamond-buttons button:active {
+            transform: scale(0.9);
+        }
+
+        button:nth-child(1) {
+            top: -30px;
+        }
+
+        button:nth-child(2) {
+            left: -30px;
+        }
+
+        button:nth-child(3) {
+            right: -30px;
+        }
+
+        button:nth-child(4) {
+            bottom: -30px;
+        }
+
+        /* Button Cluster (A, B, X, Y) */
+        .button-cluster {
+            position: absolute;
+            right: 20%;
+            bottom: 10%;
+            display: grid;
+            grid-template-areas:
+                "y b"
+                "x a";
+            gap: 15px;
+        }
+
+        .button {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background: #444;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            font-size: 18px;
+            font-weight: bold;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.5);
+        }
+
+        .button:hover {
+            background: #0077ff;
+            box-shadow: 0px 5px 20px #0077ff;
+        }
+
+        .button:active {
+            transform: scale(0.9);
+        }
+
+        /* Popup Styles */
+        .popup {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 60%;
+            height: 50%;
+            background: #ffffff;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+            display: none;
+            flex-direction: column;
+            overflow-y: auto;
+            z-index: 100;
+        }
+
+        .popup.active {
+            display: flex;
+        }
+
+        .popup h3 {
+            font-size: 1.8rem;
+            color: #0077ff;
+            margin-bottom: 15px;
+        }
+
+        .popup p {
+            font-size: 1.2rem;
+            color: #333;
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+
+        .popup button {
+            background: #0077ff;
+            color: #fff;
+            font-size: 16px;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .popup button:hover {
+            background: #005bb5;
+        }
+         /* Responsive Design */
+        @media (max-width: 768px) {
+            .symbol-container {
+                font-size: 4rem;
+            }
+
+            .diamond-buttons {
+                width: 80px;
+                height: 80px;
+            }
+
+            .diamond-buttons button {
+                width: 30px;
+                height: 30px;
+                font-size: 12px;
+            }
+           cyber-panel {
+    display: none;
+    background: rgba(10, 10, 26, 0.9);
+    border: 2px solid var(--primary-neon-blue);
+    border-radius: 15px;
+    padding: 1rem;
+    margin-top: 1rem;
+    transform: rotateX(-10deg);
+    box-shadow: 0 0 30px rgba(0, 255, 255, 0.2);
+    backdrop-filter: blur(10px);
+    animation: panel-enter 0.5s ease-out;
+}
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    scrollbar-width: thin;
+    scrollbar-color: var(--primary-neon-blue) var(--secondary-dark);
+}
+
+div {
+    display: block;
+    unicode-bidi: isolate;
+}
+body {
+    font-family: 'Orbitron', 'Roboto', sans-serif;
+    background: var(--background-gradient);
+    color: var(--text-primary);
+    line-height: 1.6;
+    overflow-x: hidden;
+}
+:root {
+    --primary-neon-blue: #00ffff;
+    --primary-neon-pink: #ff00bf;
+    --secondary-dark: #0a0a1a;
+    --accent-purple: #8a2be2;
+    --glitch-gray: #1e1e2e;
+    --text-primary: #00ffff;
+    --text-secondary: #ff00bf;
+    --background-gradient: linear-gradient(135deg, rgba(10, 10, 26, 1) 0%, rgba(30, 30, 46, 1) 50%, rgba(10, 10, 26, 1) 100%);
+}
+0% {
+    opacity: 0;
+    transform: rotateX(-30deg) translateY(50px);
+}
+100% {A
+    opacity: 1;
+    transform: rotateX(-10deg) translateY(0);
+}
+    </style>
+</head>
+<body>
+     <!-- Side Navigation -->
+    <nav class="cyber-nav">
+        <div class="cyber-nav-item">
+            <i class="fas fa-gamepad"></i>
+            <span class="tooltip">Main Game</span>
+        </div>
+        <div class="cyber-nav-item">
+            <i class="fas fa-user"></i>
+            <span class="tooltip">Profile</span>
+        </div>
+        <div class="cyber-nav-item">
+            <i class="fas fa-trophy"></i>
+            <span class="tooltip">Scoreboard</span>
+        </div>
+        <div class="cyber-nav-item">
+            <i class="fas fa-cog"></i>
+            <span class="tooltip">Settings</span>
+        </div>
+    </nav>
+    
+    <div class="game-container">
+        <!-- Top Section -->
+        <div class="top-section">
+            <div class="symbol-container">
+                <div class="symbol-text">WE</div>
+            </div>
+        </div>
+
+
+     <!-- Bottom Section -->
+        <div class="bottom-section">
+            <!-- Left Buttons -->
+            <div class="diamond-buttons">
+                <button class="top" onclick="showPopup('Top Button', 'This is the top button on the left.')">△</button>
+                <button class="left" onclick="showPopup('Left Button', 'This is the left button.')">◁</button>
+                <button class="right" onclick="showPopup('Right Button', 'This is the right button.')">▷</button>
+                <button class="bottom" onclick="showPopup('Bottom Button', 'This is the bottom button.')">▽</button>
+            </div>
+
+            <!-- Right Buttons -->
+            <div class="diamond-buttons">
+                <button class="top" onclick="showPopup('Right Top', 'This is the top button on the right.')">A</button>
+                <button class="left" onclick="showPopup('Right Left', 'This is the left button on the right.')">B</button>
+                <button class="right" onclick="showPopup('Right Right', 'This is the right button on the right.')">X</button>
+                <button class="bottom" onclick="showPopup('Right Bottom', 'This is the bottom button on the right.')">Y</button>
+            </div>
+        </div>
+
+        <!-- Popup -->
+        <div id="popup" class="popup">
+            <h3 id="popup-title"></h3>
+            <p id="popup-text"></p>
+            <button onclick="closePopup()">Close</button>
+        </div>
+    </div>
+ <div id="scoreboard-panel" class="cyber-panel">
+            <div class="cyber-header">
+                <h2 class="glitch-text">Global Leaderboard</h2>
+            </div>
+            <table class="scoreboard-table">
+                <thead>
+                    <tr>
+                        <th>Rank</th>
+                        <th>Netrunner</th>
+                        <th>Level</th>
+                        <th>Score</th>
+                        <th>Reputation</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>1</td>
+                        <td>CyberPhantom</td>
+                        <td>87</td>
+                        <td>15,342</td>
+                        <td>★★★★★</td>
+                    </tr>
+                    <tr>
+                        <td>2</td>
+                        <td>Team Giggles</td>
+                        <td>82</td>
+                        <td>15,000</td>
+                        <td>★★★★★</td>
+                    </tr>
+                    <tr>
+                        <td>3</td>
+                        <td>Team Us</td>
+                        <td>77</td>
+                        <td>14,800</td>
+                        <td>★★★★★</td>
+                    </tr>
+                    <tr>
+                        <td>4</td>
+                        <td>Jack &amp; Jill</td>
+                        <td>87</td>
+                        <td>14,342</td>
+                        <td>★★★★</td>
+                    </tr>
+                    <tr>
+                        <td>4</td>
+                       <td>David &amp; jess</td>
+                        <td>87</td>
+                        <td>14,342</td>
+                        <td>★★★★</td>
+                    </tr>
+                    <!-- More rows can be added -->
+                </tbody>
+            </table>
+        </div>
+<div id="settings-panel" class="cyber-panel">
+            <div class="cyber-header">
+                <h2 class="glitch-text">System Configuration</h2>
+            </div>
+            <div class="settings-grid">
+                <div class="setting-item">
+                    <span>Neural Interface</span>
+                    <div class="cyber-toggle active"></div>
+                </div>
+                <div class="setting-item">
+                    <span>Audio Sync</span>
+                    <div class="cyber-toggle"></div>
+                </div>
+                <div class="setting-item">
+                    <span>Holographic Display</span>
+                    <div class="cyber-toggle active"></div>
+                </div>
+            </div>
+        </div>
+    <script>
+        function showPopup(title, message) {
+            const popup = document.getElementById('popup');
+            document.getElementById('popup-title').textContent = title;
+            document.getElementById('popup-text').textContent = message;
+            popup.classList.add('active');
+        }
+
+        function closePopup() {
+            const popup = document.getElementById('popup');
+            popup.classList.remove('active');
+        }
+    </script>
+</body>
+</html>
+ 
