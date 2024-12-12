@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale: 1.0">
+    <title>Dice Game</title>
+    <style>
+        /* General Styling */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+            color: #fff;
+        }
+
+        .dice-container {
+            width: 100%;
+            height: 300px;
+            position: relative;
+            display: flex;
+            justify-content: center; /* Center the dice together */
+            align-items: center;
+            margin-top: 50px;
+        }
+
+        .dice {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #ff007f, #ff7700);
+            border: 2px solid #ff00ff;
+            border-radius: 15px;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            grid-template-rows: repeat(3, 1fr);
+            box-shadow: 0 0 10px #ff007f, 0 0 20px #ff00ff, 0 0 30px #ff007f;
+            position: absolute;
+        }
+
+        .dot {
+            width: 15px;
+            height: 15px;
+            background-color: #fff;
+            border-radius: 50%;
+            justify-self: center;
+            align-self: center;
+        }
+
+        .button-container {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        button {
+            padding: 10px 20px;
+            background-color: #ff007f;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            box-shadow: 0 0 10px #ff007f, 0 0 20px #ff00ff;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #ff00ff;
+        }
+
+        /* Pop-Up Styling */
+        .popup {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: linear-gradient(135deg, #ff007f, #ff7700);
+            color: #fff;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 0 20px #ff007f, 0 0 30px #ff00ff;
+            text-align: center;
+            z-index: 1000;
+            display: none;
+        }
+
+        .popup.visible {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="dice-container">
+        <div class="dice" id="dice1" style="left: 45%"></div> <!-- Start both dice visible with small gap -->
+        <div class="dice" id="dice2" style="left: 55%"></div> <!-- 20px gap between the two dice -->
+    </div>
+    <div class="button-container">
+        <button id="rollDiceButton">Roll Dice</button>
+        <button id="viewHistoryButton">View History</button>
+        <button id="viewTutorialButton">View Tutorial</button>
+    </div>
+
+    <div class="popup" id="popup"></div>
+
+    <script>
+        const dice1 = document.getElementById("dice1");
+        const dice2 = document.getElementById("dice2");
+        const rollDiceButton = document.getElementById("rollDiceButton");
+        const viewHistoryButton = document.getElementById("viewHistoryButton");
+        const viewTutorialButton = document.getElementById("viewTutorialButton");
+        const popup = document.getElementById("popup");
+
+        const dotPatterns = {
+            1: [4],
+            2: [0, 8],
+            3: [0, 4, 8],
+            4: [0, 2, 6, 8],
+            5: [0, 2, 4, 6, 8],
+            6: [0, 2, 3, 5, 6, 8],
+        };
+
+        const categories = ["Attack", "Defense", "Magic", "Speed", "Healing", "Luck"];
+        let history = [];
+
+        const setDiceFace = (diceElement, value) => {
+            diceElement.innerHTML = "";
+            const pattern = dotPatterns[value];
+            for (let i = 0; i < 9; i++) {
+                const dot = document.createElement("div");
+                dot.classList.add("dot");
+                if (pattern.includes(i)) dot.style.visibility = "visible";
+                else dot.style.visibility = "hidden";
+                diceElement.appendChild(dot);
+            }
+        };
+
+        const randomizeKeyframes = () => {
+            const keyframes = [];
+            for (let i = 0; i < 6; i++) {
+                const randomX = Math.random() * 100 - 50; // Range: -50vw to 50vw
+                const randomY = Math.random() * 100 - 50; // Range: -50vh to 50vh
+                const randomRotation = Math.random() * 360; // 0 to 360 degrees
+                keyframes.push({ transform: `translate(${randomX}vw, ${randomY}vh) rotate(${randomRotation}deg)` });
+            }
+            keyframes.push({ transform: "translate(0, 0) rotate(0deg)" }); // End at center
+            return keyframes;
+        };
+
+        const rollDice = () => {
+            // Display initial dice faces 3 and 4 before rolling
+            setDiceFace(dice1, 3);
+            setDiceFace(dice2, 4);
+
+            // Roll dice with random movement across the screen
+            const dice1Keyframes = randomizeKeyframes();
+            const dice2Keyframes = randomizeKeyframes();
+
+            dice1.animate(dice1Keyframes, { duration: 3000, easing: "ease-out" });
+            dice2.animate(dice2Keyframes, { duration: 3000, easing: "ease-out" });
+
+            setTimeout(() => {
+                const value1 = Math.floor(Math.random() * 6) + 1;
+                const value2 = Math.floor(Math.random() * 6) + 1;
+
+                setDiceFace(dice1, value1);
+                setDiceFace(dice2, value2);
+
+                const category = categories[value1 - 1];
+                const multiplier = value2;
+                history.push(`Category: ${category}, Multiplier: x${multiplier}`);
+                showPopup(`Category: <strong>${category}</strong><br>Multiplier: <strong>x${multiplier}</strong>`);
+            }, 3000); // Dice stop rolling after 3 seconds
+        };
+
+        const showPopup = (content) => {
+            popup.innerHTML = content;
+            popup.classList.add("visible");
+            setTimeout(() => popup.classList.remove("visible"), 3000);
+        };
+
+        const showHistory = () => {
+            const historyContent = history.length
+                ? history.map((entry) => `<p>${entry}</p>`).join("")
+                : "<p>No history yet!</p>";
+            showPopup(`<h3>Roll History</h3>${historyContent}`);
+        };
+
+        const showTutorial = () => {
+            showPopup(`
+               <h3>How to Play</h3>
+                <p>The first dice determines the category:</p>
+                <ul>
+                    <li>1: BDSM/li>
+                    <li>2: Challenge</li>
+                    <li>3: Bonus</li>
+                    <li>4: Roleplay</li>
+                    <li>5: Random</li>
+                    <li>6: Porn challenge</li>
+                </ul>
+                <p>The second dice determines the multiplier for the category!</p>
+            `);
+        };
+
+        rollDiceButton.addEventListener("click", rollDice);
+        viewHistoryButton.addEventListener("click", showHistory);
+        viewTutorialButton.addEventListener("click", showTutorial);
+
+        setDiceFace(dice1, 3);
+        setDiceFace(dice2, 4);
+    </script>
+</body>
+</html>
