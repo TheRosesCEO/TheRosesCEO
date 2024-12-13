@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Couples Cyberpunk Challenge</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/lucide-static/0.321.0/lucide-sprite.min.svg" rel="stylesheet">
+  <style>
+    :root {
+      --neon-blue: #00f6ff;
+      --neon-pink: #ff007f;
+      --neon-purple: #cc00ff;
+      --dark-background: #0a0a1a;
+    }
+
+    body {
+      background: var(--dark-background);
+      color: white;
+      font-family: 'Arial', sans-serif;
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+    }
+
+    .game-container {
+      display: flex;
+      height: 100vh;
+    }
+
+    .vertical-tabs {
+      display: flex;
+      flex-direction: column;
+      width: 80px;
+      background-color: #1a1a2e;
+      align-items: center;
+      padding-top: 20px;
+    }
+
+    .vertical-tab {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 60px;
+      height: 60px;
+      margin-bottom: 15px;
+      background-color: var(--neon-blue);
+      border-radius: 50%;
+      cursor: pointer;
+      transition: transform 0.3s ease;
+    }
+
+    .vertical-tab:hover {
+      transform: scale(1.1);
+    }
+
+    .vertical-tab svg {
+      width: 30px;
+      height: 30px;
+      stroke: var(--dark-background);
+    }
+
+    .vertical-tab.active {
+      background-color: var(--neon-pink);
+    }
+
+    .game-panel {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      padding: 20px;
+    }
+
+    .couple-area {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 20px;
+    }
+
+    .avatar {
+      padding: 10px;
+      border: 2px solid var(--neon-pink);
+      border-radius: 8px;
+      text-align: center;
+    }
+
+    .deck-container {
+      position: relative;
+      width: 100%;
+      height: 70vh;
+      perspective: 1000px;
+    }
+
+    .card {
+      position: absolute;
+      width: 120px;
+      height: 180px;
+      background-image: url('https://github.com/TheRosesCEO/TheRosesCEO/raw/main/Leonardo_Phoenix_Vibrant_highfashion_photography_featuring_a_b_1%20(2).jpg');
+      background-size: cover;
+      border-radius: 12px;
+      box-shadow: 0 4px 15px rgba(0, 246, 255, 0.3);
+      transition: 
+        transform 0.7s cubic-bezier(0.4, 0.0, 0.2, 1), 
+        opacity 0.7s ease;
+      opacity: 0;
+      transform: scale(0.7) rotate(0deg);
+    }
+
+    .card.spread {
+      opacity: 1;
+      transform: scale(1);
+    }
+
+    .game-prompt {
+      text-align: center;
+      color: var(--neon-pink);
+      font-size: 1.2rem;
+      margin-bottom: 20px;
+    }
+
+    .game-controls {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+    }
+
+    .btn {
+      padding: 10px 20px;
+      background-color: var(--neon-blue);
+      color: var(--dark-background);
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: transform 0.3s ease;
+    }
+
+    .btn:hover {
+      transform: scale(1.05);
+    }
+
+    .tab-content {
+      display: none;
+      padding: 20px;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+     .root {     --primary-neon-blue: #00ffff;
+    --primary-neon-pink: #ff00bf;
+    --secondary-dark: #0a0a1a;
+    --accent-purple: #8a2be2;
+    --glitch-gray: #1e1e2e;
+    --text-primary: #00ffff;
+    --text-secondary: #ff00bf;
+    --background-gradient: linear-gradient(
+                135deg, 
+                rgba(10,10,26,1) 0%, 
+                rgba(30,30,46,1) 50%, 
+                rgba(10,10,26,1) 100%
+            );}
+      .body {
+    font-family: 'Orbitron', 'Roboto', sans-serif;
+    color: var(--text-primary);
+    line-height: 1.6;
+    margin: 0;
+    box-sizing: border-box;
+    scrollbar-width: thin;
+    scrollbar-color: var(--primary-neon-blue) var(--secondary-dark);
+    display: none;
+    background: rgba(10,10,26,0.9);
+    border: 2px solid var(--primary-neon-blue);
+    border-radius: 15px;
+    padding: 1rem;
+    margin-top: 1rem;
+    transform: rotateX(-10deg);
+    box-shadow: 0 0 30px rgba(0,255,255,0.2);
+    backdrop-filter: blur(10px);
+    animation: panel-enter 0.5s ease-out;}
+
+          .achievement-panel {
+            background: rgba(255,255,255,0.1);
+            border-radius: 15px;
+            padding: 15px;
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .achievement {
+            display: inline-block;
+            margin: 5px;
+            padding: 5px 10px;
+            background: rgba(44, 83, 100, 0.7);
+            border-radius: 5px;
+            font-size: 0.8rem;
+        }
+  </style>
+</head>
+<body>
+  <div class="game-container">
+    <!-- Vertical Tabs -->
+    <div class="vertical-tabs">
+      <div class="vertical-tab active" onclick="openTab('scoreboard')">
+        <svg><use href="#chart-bar" /></svg>
+      </div>
+      <div class="vertical-tab" onclick="openTab('settings')">
+        <svg><use href="#settings" /></svg>
+      </div>
+      <div class="vertical-tab" onclick="openTab('profile')">
+        <svg><use href="#user" /></svg>
+      </div>
+      <div class="vertical-tab" onclick="openTab('challenges')">
+        <svg><use href="#target" /></svg>
+      </div>
+    </div>
+
+    <!-- Game Panel -->
+    <div class="game-panel">
+      <div class="couple-area">
+        <div class="avatar" id="player1-avatar">👩‍❤️‍👨 Player 1</div>
+        <div class="avatar" id="player2-avatar">👨‍❤️‍👨 Player 2</div>
+      </div>
+
+      <div class="game-prompt" id="gamePrompt">Click Start Game to Begin!</div>
+
+      <div class="deck-container" id="selectedCards"></div>
+
+      <div class="game-controls">
+        <button class="btn" id="startGameButton" onclick="startGame()">Start Game</button>
+        <button class="btn hidden" id="shuffleButton" onclick="shuffleDeck()">Shuffle & Spread</button>
+      </div>
+
+      <!-- Tab Contents -->
+      <div class="tab-content active" id="scoreboard">
+        <div id="scoreboard-panel" class="cyber-panel">
+            <div class="cyber-header">
+                <h2 class="glitch-text">Global Leaderboard</h2>
+            </div>
+            <table class="scoreboard-table">
+                <thead>
+                    <tr>
+                        <th>Rank</th>
+                        <th>Netrunner</th>
+                        <th>Level</th>
+                        <th>Score</th>
+                        <th>Reputation</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>1</td>
+                        <td>CyberPhantom</td>
+                        <td>87</td>
+                        <td>15,342</td>
+                        <td>★★★★★</td>
+                    </tr>
+                    <tr>
+                        <td>2</td>
+                        <td>Team Giggles</td>
+                        <td>82</td>
+                        <td>15,000</td>
+                        <td>★★★★★</td>
+                    </tr>
+                    <tr>
+                        <td>3</td>
+                        <td>Team Us</td>
+                        <td>77</td>
+                        <td>14,800</td>
+                        <td>★★★★★</td>
+                    </tr>
+                    <tr>
+                        <td>4</td>
+                        <td>Jack &amp; Jill</td>
+                        <td>87</td>
+                        <td>14,342</td>
+                        <td>★★★★</td>
+                    </tr>
+                    <tr>
+                        <td>4</td>
+                       <td>David &amp; jess</td>
+                        <td>87</td>
+                        <td>14,342</td>
+                        <td>★★★★</td>
+                    </tr>
+                    <!-- More rows can be added -->
+                </tbody>
+            </table>
+        </div>
+      </div>
+
+      <div class="tab-content" id="settings">
+        <h3>Game Settings</h3>
+        <p>Customize your game experience...</p>
+      </div>
+
+      <div class="tab-content" id="profile">
+        <h3>Player Profile</h3>
+        <p>Customize your avatar and track achievements...</p>
+      </div>
+
+      <div class="tab-content" id="challenges">
+        <h3>Daily Challenges</h3>
+        <p>Complete special missions for bonus points!</p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const deckContainer = document.getElementById('selectedCards');
+    const gamePrompt = document.getElementById('gamePrompt');
+    const startGameButton = document.getElementById('startGameButton');
+    const shuffleButton = document.getElementById('shuffleButton');
+    const verticalTabs = document.querySelectorAll('.vertical-tab');
+    const tabContents = document.querySelectorAll('.tab-content');
+
+    let deck = [];
+    let playerScores = { player1: 0, player2: 0 };
+
+    function startGame() {
+      gamePrompt.textContent = 'Shuffling and dealing cards...';
+      startGameButton.classList.add('hidden');
+      shuffleButton.classList.remove('hidden');
+      shuffleDeck();
+    }
+
+    function shuffleDeck() {
+      deckContainer.innerHTML = '';
+      deck = [];
+
+      const cardCount = 25;
+      const radius = 300;
+      const centerX = deckContainer.clientWidth / 2;
+      const centerY = deckContainer.clientHeight / 2;
+
+      for (let i = 0; i < cardCount; i++) {
+        const angle = (i / cardCount) * Math.PI * 2;
+        const x = centerX + Math.cos(angle) * radius;
+        const y = centerY + Math.sin(angle) * radius;
+
+        const card = document.createElement('div');
+        card.className = 'card';
+        card.style.left = `${x - 60}px`;
+        card.style.top = `${y - 90}px`;
+        card.style.transform = `rotate(${angle * 180 / Math.PI}deg) scale(0.7)`;
+        card.style.zIndex = cardCount - i;
+
+        deck.push(card);
+        deckContainer.appendChild(card);
+
+        setTimeout(() => {
+          card.classList.add('spread');
+        }, 50 * i);
+      }
+
+      gamePrompt.textContent = 'Player 1 and Player 2: Select 2 cards!';
+    }
+
+    function openTab(tabId) {
+      verticalTabs.forEach(tab => tab.classList.remove('active'));
+      tabContents.forEach(tab => tab.classList.remove('active'));
+
+      document.querySelector(`[onclick="openTab('${tabId}')"]`).classList.add('active');
+      document.getElementById(tabId).classList.add('active');
+    }
+  </script>
+</body>
+</html>

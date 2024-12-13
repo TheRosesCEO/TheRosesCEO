@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cyber Lovers Challenge</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+  <style>
+    :root {
+      --neon-blue: #00f6ff;
+      --neon-pink: #ff007f;
+      --neon-purple: #cc00ff;
+      --dark-background: #0a0a1a;
+      --cyber-gradient: linear-gradient(135deg, #00f6ff, #ff007f);
+    }
+
+    * {
+      box-sizing: border-box;
+      transition: all 0.3s ease;
+    }
+
+    body {
+      background: var(--dark-background);
+      color: white;
+      font-family: 'Orbitron', 'Arial', sans-serif;
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+    }
+
+    .game-container {
+      display: flex;
+      height: 100vh;
+    }
+
+    .vertical-tabs {
+      width: 80px;
+      background: linear-gradient(to bottom, #1a1a2e, #16213e);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding-top: 20px;
+    }
+
+    .vertical-tab {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 60px;
+      height: 60px;
+      margin-bottom: 15px;
+      background: rgba(0, 246, 255, 0.2);
+      border-radius: 50%;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .vertical-tab:hover {
+      transform: scale(1.1) rotate(15deg);
+      background: var(--cyber-gradient);
+    }
+
+    .vertical-tab.active {
+      background: var(--cyber-gradient);
+      box-shadow: 0 0 15px var(--neon-blue);
+    }
+
+    .vertical-tab i {
+      color: var(--neon-blue);
+      font-size: 24px;
+    }
+
+    .vertical-tab.active i {
+      color: white;
+    }
+body, html {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+}
+
+.game-container {
+  display: flex;
+  height: 100vh;
+  justify-content: center;
+  align-items: center;
+}
+
+.game-panel {
+  width: 90%; /* Adjust width as needed */
+  max-width: 1200px; /* Optional: prevents becoming too wide on large screens */
+  height: 80vh; /* Gives some breathing room */
+  display: flex;
+  flex-direction: column;
+  padding: 30px;
+  background: rgba(10, 10, 26, 0.9);
+  position: relative;
+  border-radius: 15px; /* Optional: rounds the corners */
+}
+
+.couple-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  width: 100%;
+  position: absolute;
+  top: 20px;
+  left: 0;
+  padding: 0 20px; /* Match the game-panel's side padding */
+}
+
+.team-name-button {
+  background: var(--neon-purple);
+  border-radius: 10px;
+  padding: 8px 12px;
+  text-align: left;
+  min-width: 200px;
+}
+
+.team-points-button {
+  background: var(--neon-purple);
+  border-radius: 10px;
+  padding: 8px 12px;
+  text-align: right;
+  min-width: 200px;
+}
+
+.team-name-button span,
+.team-points-button span {
+  font-size: 0.8em;
+  color: rgba(255,255,255,0.7);
+  display: block;
+}
+
+.team-name-value,
+.team-points-value {
+  font-weight: bold;
+  font-size: 1.2em;
+  color: white;
+}
+
+#deckContainer {
+  flex-grow: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+    .card {
+      position: absolute;
+      width: 120px;
+      height: 180px;
+      transform: rotate(var(--rotation));
+      left: var(--x);
+      top: var(--y);
+      opacity: 0;
+      transition: all 0.6s ease;
+      transform-style: preserve-3d;
+      cursor: pointer;
+    }
+
+    .card-inner {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      transition: transform 0.6s;
+      transform-style: preserve-3d;
+    }
+
+    .card.flipped .card-inner {
+      transform: rotateY(180deg);
+    }
+
+    .card-front, .card-back {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      backface-visibility: hidden;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+    }
+
+    .card-front {
+      background: var(--neon-blue);
+      background-size: cover;
+      background-position: center;
+    }
+
+    .card-back {
+      background: var(--neon-purple);
+      transform: rotateY(180deg);
+      text-align: center;
+      padding: 10px;
+      font-size: 14px;
+    }
+
+    .card.spread {
+      opacity: 1;
+    }
+
+    /* Overlay Styles */
+    .overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+            background: linear-gradient(135deg, #ff007f, #ff7700);
+      z-index: 1000;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+      overflow-y: auto;
+    }
+
+    .overlay-content {
+      background: var(--neon-purple);
+      border-radius: 15px;
+      padding: 30px;
+      max-width: 800px;
+      width: 100%;
+      max-height: 80%;
+      overflow-y: auto;
+    }
+
+    .close-btn {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      color: white;
+      font-size: 30px;
+      cursor: pointer;
+    }
+
+    /* Scoreboard, Profile, Settings Styles */
+    .scoreboard-entry, .profile-stats, .settings-grid {
+      background: var(--neon-purple);
+      border-radius: 10px;
+      padding: 15px;
+    }
+      .achievement-panel {
+            background: rgba(255,255,255,0.3);
+            border-radius: 15px;
+            padding: 15px;
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .achievement {
+            display: inline-block;
+            margin: 5px;
+            padding: 5px 10px;
+            background: rgba(44, 83, 100, 0.7);
+            border-radius: 5px;
+            font-size: 0.8rem;
+        }
+  </style>
+</head>
+<body>
+  <div class="game-container">
+  <div class="vertical-tabs">
+    <div class="vertical-tab active" onclick="openOverlay('scoreboard')">
+      <i class="fas fa-trophy"></i>
+    </div>
+    <div class="vertical-tab" onclick="openOverlay('settings')">
+      <i class="fas fa-cog"></i>
+    </div>
+    <div class="vertical-tab" onclick="openOverlay('profile')">
+      <i class="fas fa-users"></i>
+    </div>
+    <div class="vertical-tab" onclick="openOverlay('challenges')">
+      <i class="fas fa-heart"></i>
+    </div>
+  </div>
+  
+  <div class="game-panel">
+    <div class="couple-header">
+      <div class="team-name-button">
+        <span>Team Name</span>
+        <div class="team-name-value">ERIKA & BILLY</div>
+      </div>
+      <div class="team-points-button">
+        <span>Total Points</span>
+        <div class="team-points-value">23,550</div>
+      </div>
+    </div>
+
+    <div id="deckContainer"></div>
+  </div>
+</div>
+
+  <!-- Overlays -->
+  <div id="scoreboard-overlay" class="overlay">
+    <div class="overlay-content">
+      <h2>Global Scoreboard</h2>
+      <i class="fas fa-times close-btn" onclick="closeOverlay('scoreboard')"></i>
+      <div class="scoreboard-entry">
+        <span>Team Cyber Phoenix</span>
+        <span>1250 Points</span>
+      </div>
+      <div class="scoreboard-entry">
+        <span>Digital Dreamers</span>
+        <span>1100 Points</span>
+      </div>
+    </div>
+  </div>
+
+  <div id="settings-overlay" class="overlay">
+    <div class="overlay-content">
+      <h2>Game Settings</h2>
+      <i class="fas fa-times close-btn" onclick="closeOverlay('settings')"></i>
+      <div class="settings-grid">
+        <div class="setting-card">
+          <h3>Sound</h3>
+          <input type="checkbox" checked> Enable Game Sounds
+        </div>
+        <div class="setting-card">
+          <h3>Difficulty</h3>
+          <select>
+            <option>Easy</option>
+            <option selected>Medium</option>
+            <option>Hard</option>
+          </select>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="profile-overlay" class="overlay">
+    <div class="overlay-content">
+      <h2>Team Profile</h2>
+      <i class="fas fa-times close-btn" onclick="closeOverlay('profile')"></i>
+      <div class="profile-stats">
+        <div class="stat-item">
+          <strong>Challenges</strong>
+          <span>24</span>
+        </div>
+        <div class="stat-item">
+          <strong>Points</strong>
+          <span>980</span>
+        </div>
+        <div class="stat-item">
+          <strong>Rank</strong>
+          <span>3rd</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="challenges-overlay" class="overlay">
+    <div class="overlay-content">
+      <h2>Upcoming Challenges</h2>
+      <i class="fas fa-times close-btn" onclick="closeOverlay('challenges')"></i>
+      <div class="scoreboard-entry">
+        <span>💖 Romantic Photo Challenge</span>
+        <span>+50 Points</span>
+      </div>
+      <div class="scoreboard-entry">
+        <span>🌟 Communication Quest</span>
+        <span>+75 Points</span>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function shuffleDeck() {
+      const deckContainer = document.getElementById('deckContainer');
+      deckContainer.innerHTML = ''; 
+
+      const cardCount = 12; 
+      const radius = 200; 
+      const centerX = deckContainer.clientWidth / 2;
+      const centerY = deckContainer.clientHeight / 2;
+
+      const challenges = [
+        "Write a love letter without using the word 'love'",
+        "Create a romantic playlist together",
+        "Share your deepest fear with each other",
+        "Plan a surprise date night",
+        "Learn a new skill together",
+        "Cook a meal from scratch without a recipe",
+        "Take a dance class together",
+        "Write a poem about your partner",
+        "Do a random act of kindness for each other",
+        "Have a technology-free evening",
+        "Share your favorite childhood memory",
+        "Create art together"
+      ];
+
+      for (let i = 0; i < cardCount; i++) {
+        const angle = (i / cardCount) * Math.PI * 2;
+        const x = centerX + Math.cos(angle) * radius - 60;
+        const y = centerY + Math.sin(angle) * radius - 90;
+
+        const card = document.createElement('div');
+        card.className = 'card';
+        card.dataset.index = i;
+        card.style.setProperty('--rotation', `${(angle * 180) / Math.PI}deg`);
+        card.style.setProperty('--x', `${x}px`);
+        card.style.setProperty('--y', `${y}px`);
+
+        const cardInner = document.createElement('div');
+        cardInner.className = 'card-inner';
+        cardInner.innerHTML = `
+          <div class="card-front" style="background-image: url('https://github.com/TheRosesCEO/TheRosesCEO/blob/main/Leonardo_Phoenix_Vibrant_highfashion_photography_featuring_a_b_0%20(1).jpg?raw=true')"></div>
+          <div class="card-back">${challenges[i]}</div>
+        `;
+        
+        card.addEventListener('click', () => {
+          card.classList.toggle('flipped');
+        });
+
+        card.appendChild(cardInner);
+        deckContainer.appendChild(card);
+      }
+
+      setTimeout(() => {
+        document.querySelectorAll('.card').forEach(card => {
+          card.classList.add('spread');
+        });
+      }, 100);
+    }
+
+    function openOverlay(tabId) {
+      const overlay = document.getElementById(`${tabId}-overlay`);
+      if (overlay) {
+        overlay.style.display = 'flex';
+      }
+    }
+
+    function closeOverlay(tabId) {
+      const overlay = document.getElementById(`${tabId}-overlay`);
+      if (overlay) {
+        overlay.style.display = 'none';
+      }
+    }
+
+    // Add click event to close overlays when clicking outside content
+    document.querySelectorAll('.overlay').forEach(overlay => {
+      overlay.addEventListener('click', (event) => {
+        if (event.target === overlay) {
+          overlay.style.display = 'none';
+        }
+      });
+    });
+
+    shuffleDeck(); // Shuffle deck when page loads
+  </script>
+</body>
+</html>
